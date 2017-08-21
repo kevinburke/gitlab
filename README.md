@@ -7,6 +7,12 @@ browser tab to the job that failed.
 
 Run `gitlab open` to open the most recent pipeline in your browser.
 
+## Configuration
+
+Gitlab CLI needs an API token to make requests to the Gitlab API. Run the CLI
+tool once (`gitlab open`), which will walk you through the process of creating
+a token and installing it on your local machine.
+
 ## Installation
 
 Find your target operating system (darwin, windows, linux) and desired bin
