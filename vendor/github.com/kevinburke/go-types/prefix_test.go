@@ -28,10 +28,15 @@ func TestUUIDString(t *testing.T) {
 	assertEquals(t, pfx.String(), fmt.Sprintf("job_%s", u))
 }
 
-func TestNewUUIDPrefix(t *testing.T) {
+func TestNewPrefixUUID(t *testing.T) {
 	pfx, err := NewPrefixUUID("usr_6740b44e-13b9-475d-af06-979627e0e0d6")
 	assertNotError(t, err, "")
 	assertEquals(t, pfx.Prefix, "usr_")
+	assertEquals(t, pfx.UUID.String(), "6740b44e-13b9-475d-af06-979627e0e0d6")
+
+	pfx, err = NewPrefixUUID("6740b44e-13b9-475d-af06-979627e0e0d6")
+	assertNotError(t, err, "")
+	assertEquals(t, pfx.Prefix, "")
 	assertEquals(t, pfx.UUID.String(), "6740b44e-13b9-475d-af06-979627e0e0d6")
 }
 

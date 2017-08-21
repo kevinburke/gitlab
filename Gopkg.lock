@@ -16,8 +16,7 @@
 [[projects]]
   name = "github.com/kevinburke/go-types"
   packages = ["."]
-  revision = "ba9c6cec202c82e052f686d0640181b99f851970"
-  version = "0.20"
+  revision = "4297d3d97383038ce276d912d16de3eadeb7b521"
 
 [[projects]]
   name = "github.com/kevinburke/rest"
@@ -63,6 +62,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "9bbea74164da7bd0423a96306cc6139febd196066c47944627e805692296358c"
+  inputs-digest = "e5c5719af9bca1b9d867de75431bd04b012eeae666bf4ad9be01c0bfdcd29205"
   solver-name = "gps-cdcl"
   solver-version = 1

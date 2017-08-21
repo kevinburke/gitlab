@@ -1,36 +1,37 @@
 .PHONY: install build test
-BUMP_VERSION := $(shell command -v bump_version)
-GODOCDOC := $(shell command -v godocdoc)
-MEGACHECK := $(shell command -v megacheck)
+BUMP_VERSION := $(GOPATH)/bin/bump_version
+GODOCDOC := $(GOPATH)/bin/godocdoc
+MEGACHECK := $(GOPATH)/bin/megacheck
 
 install:
 	go get ./...
 	go install ./...
 
 build:
-	go build ./...
+	bazel build //...
 
-vet:
-ifndef MEGACHECK
-	go get -u honnef.co/go/tools/cmd/megacheck
-endif
-	megacheck ./...
+$(MEGACHECK):
+	go get honnef.co/go/tools/cmd/megacheck
+
+vet: $(MEGACHECK)
+	$(MEGACHECK) ./...
 	go vet ./...
 
 test: vet
-	go test ./...
+	bazel test --test_output=errors //...
 
 race-test:
-	go test -race -v ./...
+	bazel test --test_output=errors --features=race //...
 
-release: test
-ifndef BUMP_VERSION
+ci:
+	bazel test --noshow_progress --noshow_loading_progress --test_output=errors \
+		--features=race //...
+
+$(BUMP_VERSION):
 	go get github.com/Shyp/bump_version
-endif
-	bump_version minor types.go
 
-docs:
-ifndef GODOCDOC
-	go get -u github.com/kevinburke/godocdoc
-endif
-	godocdoc
+release: test | $(BUMP_VERSION)
+	$(BUMP_VERSION) minor types.go
+
+docs: $(GODOCDOC)
+	$(GODOCDOC)
