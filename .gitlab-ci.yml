@@ -1,0 +1,31 @@
+stages:
+  - build
+  - test
+
+variables:
+  # todo this is not great.
+  GITLAB_SERVER: gitlab.com
+
+build:
+  variables:
+    GIT_STRATEGY: clone
+    GOPATH: '${CI_PROJECT_DIR}'
+  image: golang:1.9rc2-stretch
+  stage: build
+  script:
+    - 'cd /tmp && mv "${GOPATH}" /tmp/${CI_PROJECT_NAME}-${CI_COMMIT_SHA} && mkdir -p ${GOPATH}/src/${GITLAB_SERVER}/${CI_PROJECT_NAMESPACE} && mv /tmp/${CI_PROJECT_NAME}-${CI_COMMIT_SHA} $GOPATH/src/${GITLAB_SERVER}/${CI_PROJECT_PATH}; cd /builds/kevinburke/gitlab'
+    - 'go install -race ${GITLAB_SERVER}/${CI_PROJECT_PATH}'
+  artifacts:
+    paths:
+      - '$GOPATH/bin/gitlab'
+      - '$GOPATH/src/${GITLAB_SERVER}/${CI_PROJECT_PATH}'
+      - '$GOPATH/pkg'
+    name: "${CI_JOB_STAGE}-${CI_COMMIT_SHA}"
+
+test:
+  variables:
+    GOPATH: '${CI_PROJECT_DIR}'
+  image: golang:1.9rc2-stretch
+  stage: test
+  script:
+    - '( cd ${GOPATH}/src/${GITLAB_SERVER}/${CI_PROJECT_PATH} && make race-test )'

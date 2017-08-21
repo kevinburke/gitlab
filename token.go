@@ -62,5 +62,9 @@ to create a token.
 			return org.Token, nil
 		}
 	}
-	return "", fmt.Errorf("could not find host %s in the config", orgName)
+	return "", fmt.Errorf(`Could not find host %[1]s in the config.
+
+Add a token at %[1]s/profile/personal_access_tokens, then add it to the 
+config file.
+`, orgName)
 }
