@@ -2,6 +2,7 @@ DEP := $(GOPATH)/bin/dep
 DIFFER := $(GOPATH)/bin/differ
 BUMP_VERSION := $(GOPATH)/bin/bump_version
 MEGACHECK := $(GOPATH)/bin/megacheck
+RELEASE := $(GOPATH)/bin/github-release
 WRITE_MAILMAP := $(GOPATH)/bin/write_mailmap
 
 test: vet
