@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/Shyp/go-git"
-	types "github.com/Shyp/go-types"
+	types "github.com/kevinburke/go-types"
 	"github.com/kevinburke/rest"
 )
 

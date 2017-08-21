@@ -8,16 +8,16 @@
   version = "0.1"
 
 [[projects]]
-  name = "github.com/Shyp/go-types"
-  packages = ["."]
-  revision = "05e74ea3d9a063086e0ed6487465628006bd50a6"
-  version = "0.14"
-
-[[projects]]
   name = "github.com/inconshreveable/log15"
   packages = ["."]
   revision = "b105bd37f74e5d9dc7b6ad7806715c7a2b83fd3f"
   version = "v2.11"
+
+[[projects]]
+  name = "github.com/kevinburke/go-types"
+  packages = ["."]
+  revision = "ba9c6cec202c82e052f686d0640181b99f851970"
+  version = "0.20"
 
 [[projects]]
   name = "github.com/kevinburke/rest"
@@ -38,15 +38,15 @@
   version = "v0.0.2"
 
 [[projects]]
-  branch = "master"
-  name = "github.com/nu7hatch/gouuid"
-  packages = ["."]
-  revision = "179d4d0c4d8d407a32af483c2354df1d2c91e6c3"
-
-[[projects]]
   name = "github.com/pelletier/go-toml"
   packages = ["."]
   revision = "4692b8f9babfc93db58cc592ba2689d8736781de"
+
+[[projects]]
+  name = "github.com/satori/go.uuid"
+  packages = ["."]
+  revision = "879c5887cd475cd7864858769793b2ceb0d44feb"
+  version = "v1.1.0"
 
 [[projects]]
   branch = "master"
@@ -63,6 +63,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "82ee7d108141d24aaf99e884cd215f3a39a6427ed1cb226eef31b7ac926ad14b"
+  inputs-digest = "9bbea74164da7bd0423a96306cc6139febd196066c47944627e805692296358c"
   solver-name = "gps-cdcl"
   solver-version = 1

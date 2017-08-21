@@ -35,7 +35,7 @@ func (nt *NullTime) UnmarshalJSON(b []byte) error {
 }
 
 func (nt NullTime) MarshalJSON() ([]byte, error) {
-	if nt.Valid == false {
+	if !nt.Valid {
 		return []byte("null"), nil
 	}
 	b, err := json.Marshal(nt.Time)

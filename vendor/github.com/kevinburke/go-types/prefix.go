@@ -6,13 +6,13 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/nu7hatch/gouuid"
+	"github.com/satori/go.uuid"
 )
 
 // A PrefixUUID stores an additional prefix as part of a UUID type.
 type PrefixUUID struct {
 	Prefix string
-	UUID   *uuid.UUID
+	UUID   uuid.UUID
 }
 
 func (u PrefixUUID) String() string {
@@ -20,16 +20,13 @@ func (u PrefixUUID) String() string {
 }
 
 // GenerateUUID generates a UUID with the given prefix.
-func GenerateUUID(prefix string) (PrefixUUID, error) {
-	uid, err := uuid.NewV4()
-	if err != nil {
-		return PrefixUUID{}, err
-	}
+func GenerateUUID(prefix string) PrefixUUID {
+	uid := uuid.NewV4()
 	id := PrefixUUID{
 		Prefix: prefix,
 		UUID:   uid,
 	}
-	return id, nil
+	return id
 }
 
 // NewPrefixUUID creates a PrefixUUID from the prefix and string uuid. Returns
@@ -39,7 +36,7 @@ func NewPrefixUUID(caboodle string) (PrefixUUID, error) {
 		return PrefixUUID{}, fmt.Errorf("types: Could not parse \"%s\" as a UUID with a prefix", caboodle)
 	}
 	uuidPart := caboodle[len(caboodle)-36:]
-	u, err := uuid.ParseHex(uuidPart)
+	u, err := uuid.FromString(uuidPart)
 	if err != nil {
 		return PrefixUUID{}, err
 	}
@@ -65,9 +62,6 @@ func (pu *PrefixUUID) UnmarshalJSON(b []byte) error {
 }
 
 func (pu PrefixUUID) MarshalJSON() ([]byte, error) {
-	if pu.UUID == nil {
-		return []byte{}, errors.New("no UUID to convert to JSON")
-	}
 	return json.Marshal(pu.String())
 }
 
@@ -78,22 +72,22 @@ func (pu *PrefixUUID) Scan(value interface{}) error {
 	if value == nil {
 		return errors.New("types: cannot scan null into a PrefixUUID")
 	}
-	bits, ok := value.([]byte)
-	if !ok {
-		return fmt.Errorf("types: can't scan value %v into a PrefixUUID", value)
-	}
 	var err error
-	if len(bits) >= 36 {
-		*pu, err = NewPrefixUUID(string(bits))
-	} else {
-		var u *uuid.UUID
-		u, err = uuid.Parse(bits)
-		pu.UUID = u
+	switch t := value.(type) {
+	case []byte:
+		if len(t) >= 36 {
+			*pu, err = NewPrefixUUID(string(t))
+		} else {
+			var u uuid.UUID
+			u, err = uuid.FromBytes(t)
+			pu.UUID = u
+		}
+	case string:
+		*pu, err = NewPrefixUUID(t)
+	default:
+		return fmt.Errorf("types: can't scan value of unknown type %v into a PrefixUUID", value)
 	}
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
 
 // Value implements the driver.Valuer interface.
