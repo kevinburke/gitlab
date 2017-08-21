@@ -1,0 +1,16 @@
+
+[[constraint]]
+  name = "github.com/Shyp/go-git"
+  version = "0.1.0"
+
+[[constraint]]
+  name = "github.com/Shyp/go-types"
+  version = "0.14.0"
+
+[[constraint]]
+  name = "github.com/kevinburke/rest"
+  version = "1.0.0"
+
+[[constraint]]
+  name = "github.com/pelletier/go-toml"
+  revision = "4692b8f9babfc93db58cc592ba2689d8736781de"
