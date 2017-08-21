@@ -32,9 +32,27 @@ deps: | $(DEP)
 	$(DEP) ensure
 	$(DEP) prune
 
-release: race-test | $(BUMP_VERSION) $(DIFFER)
+release: race-test | $(BUMP_VERSION) $(DIFFER) $(RELEASE)
+ifndef version
+	@echo "Please provide a version"
+	exit 1
+endif
+ifndef GITHUB_TOKEN
+	@echo "Please set GITHUB_TOKEN in the environment"
+	exit 1
+endif
 	$(DIFFER) $(MAKE) authors
 	$(BUMP_VERSION) minor main.go
+	git push origin --tags
+	mkdir -p releases/$(version)
+	GOOS=linux GOARCH=amd64 go build -o releases/$(version)/gitlab-linux-amd64 .
+	GOOS=darwin GOARCH=amd64 go build -o releases/$(version)/gitlab-darwin-amd64 .
+	GOOS=windows GOARCH=amd64 go build -o releases/$(version)/gitlab-windows-amd64 .
+	# These commands are not idempotent, so ignore failures if an upload repeats
+	$(RELEASE) release --user kevinburke --repo gitlab --tag $(version) || true
+	$(RELEASE) upload --user kevinburke --repo gitlab --tag $(version) --name gitlab-linux-amd64 --file releases/$(version)/gitlab-linux-amd64 || true
+	$(RELEASE) upload --user kevinburke --repo gitlab --tag $(version) --name gitlab-darwin-amd64 --file releases/$(version)/gitlab-darwin-amd64 || true
+	$(RELEASE) upload --user kevinburke --repo gitlab --tag $(version) --name gitlab-windows-amd64 --file releases/$(version)/gitlab-windows-amd64 || true
 
 $(WRITE_MAILMAP):
 	go get github.com/kevinburke/write_mailmap
