@@ -14,6 +14,8 @@ import (
 	"github.com/kevinburke/rest"
 )
 
+const Version = "0.1"
+
 func checkError(err error, msg string) {
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error %s: %v\n", msg, err)
@@ -199,7 +201,10 @@ func main() {
 	args := flag.Args()
 	switch args[0] {
 	case "help":
-		os.Stderr.WriteString("please provide an argument\n")
+		os.Stderr.WriteString("gitlab [wait|help|open|version]\n")
+		os.Exit(2)
+	case "version":
+		os.Stderr.WriteString("gitlab version " + Version + "\n")
 		os.Exit(2)
 	case "wait":
 		wait(args[1:])

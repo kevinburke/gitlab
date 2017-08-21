@@ -1,5 +1,8 @@
 DEP := $(GOPATH)/bin/dep
+DIFFER := $(GOPATH)/bin/differ
+BUMP_VERSION := $(GOPATH)/bin/bump_version
 MEGACHECK := $(GOPATH)/bin/megacheck
+WRITE_MAILMAP := $(GOPATH)/bin/write_mailmap
 
 test: vet
 	@# this target should always be listed first so "make" runs the tests.
@@ -7,6 +10,12 @@ test: vet
 
 race-test: vet
 	go list ./... | grep -v vendor | xargs go test -race
+
+$(BUMP_VERSION):
+	go get github.com/Shyp/bump_version
+
+$(DIFFER):
+	go get github.com/kevinburke/differ
 
 $(MEGACHECK):
 	go get honnef.co/go/tools/cmd/megacheck
@@ -22,3 +31,16 @@ $(DEP):
 deps: | $(DEP)
 	$(DEP) ensure
 	$(DEP) prune
+
+release: race-test | $(BUMP_VERSION) $(DIFFER)
+	$(DIFFER) $(MAKE) authors
+	$(BUMP_VERSION) minor main.go
+
+$(WRITE_MAILMAP):
+	go get github.com/kevinburke/write_mailmap
+
+AUTHORS.txt: | $(WRITE_MAILMAP)
+	$(WRITE_MAILMAP) > AUTHORS.txt
+
+authors: AUTHORS.txt
+	write_mailmap > AUTHORS.txt
