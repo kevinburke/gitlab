@@ -34,6 +34,8 @@ type Job struct {
 	ID         uint64         `json:"id"`
 	CreatedAt  time.Time      `json:"created_at"`
 	FinishedAt types.NullTime `json:"finished_at"`
+	Name       string         `json:"name"`
+	StartedAt  types.NullTime `json:"started_at"`
 	Stage      string         `json:"stage"`
 	Status     string         `json:"status"`
 }
@@ -162,10 +164,10 @@ func wait(args []string) error {
 		pipeline := new(Pipeline)
 		doErr := client.Do(req, pipeline)
 		checkError(doErr, "getting pipeline")
+		jobs, err := getJobs(ctx, client, cfg)
+		checkError(err, "getting pipeline jobs")
 		if pipeline.Status == "failed" {
 			os.Stdout.WriteString("pipeline failed\n")
-			jobs, err := getJobs(ctx, client, cfg)
-			checkError(err, "getting pipeline jobs")
 			for _, job := range jobs {
 				if job.Status == "failed" {
 					openJob(ctx, cfg, job)
@@ -187,8 +189,30 @@ func wait(args []string) error {
 		} else {
 			d = d.Round(time.Second)
 		}
-		fmt.Printf("Status is %s, %s since push, sleeping...\n", pipeline.Status, d)
+		foundJob := false
+		for i, job := range jobs {
+			if job.Status == "running" {
+				var d2 time.Duration
+				if job.StartedAt.Valid && !job.StartedAt.Time.IsZero() {
+					d2 = time.Since(job.StartedAt.Time)
+				} else {
+					d2 = time.Since(job.CreatedAt)
+				}
+				if d2 < time.Minute {
+					d2 = d2.Round(500 * time.Millisecond)
+				} else {
+					d2 = d2.Round(time.Second)
+				}
+				fmt.Printf("Job #%d (%q step %d) is %s for %s, %s since push, sleeping...\n", job.ID, job.Name, i+1, job.Status, d2, d)
+				foundJob = true
+				break
+			}
+		}
 		time.Sleep(3 * time.Second)
+		if foundJob {
+			continue
+		}
+		fmt.Printf("Status is %s, %s since push, sleeping...\n", pipeline.Status, d)
 	}
 }
 
