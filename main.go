@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strings"
 	"time"
 
 	"github.com/Shyp/go-git"
@@ -69,20 +70,30 @@ func getLatestPipeline(ctx context.Context, cfg *PipelineConfig) (*ListPipeline,
 	if err != nil {
 		return nil, err
 	}
+	tip, err := git.Tip(branch)
+	if err != nil {
+		return nil, err
+	}
 	cfg.Branch = branch
 	client := rest.NewClient("", "", "https://"+cfg.Host+"/api/v4")
 	path := fmt.Sprintf("/projects/%s%%2F%s/pipelines?private_token=%s", cfg.Org, cfg.RepoName, cfg.Token)
-	req, err := client.NewRequest("GET", path, nil)
-	checkError(err, "creating request")
-	results := make([]*ListPipeline, 0)
-	req = req.WithContext(ctx)
-	doErr := client.Do(req, &results)
-	checkError(doErr, "getting pipelines")
+	tctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
 	var pipeline *ListPipeline
-	for i := range results {
-		if results[i].Ref == branch {
-			pipeline = results[i]
+	for {
+		req, err := client.NewRequest("GET", path, nil)
+		if err == context.DeadlineExceeded || err == context.Canceled {
 			break
+		}
+		checkError(err, "creating request")
+		results := make([]*ListPipeline, 0)
+		req = req.WithContext(tctx)
+		doErr := client.Do(req, &results)
+		checkError(doErr, "getting pipelines")
+		for i := range results {
+			if results[i].Ref == branch && strings.HasPrefix(results[i].SHA, tip) {
+				return results[i], nil
+			}
 		}
 	}
 	if pipeline == nil {
@@ -150,12 +161,12 @@ func wait(args []string) error {
 		Org:      remote.Path,
 		Token:    token,
 	}
-	client := rest.NewClient("", "", "https://"+remote.Host+"/api/v4")
 	pipeline, err := getLatestPipeline(ctx, cfg)
 	if err != nil {
 		return err
 	}
 	cfg.ID = pipeline.ID
+	client := rest.NewClient("", "", "https://"+remote.Host+"/api/v4")
 	for {
 		path := fmt.Sprintf("/projects/%s%%2F%s/pipelines/%d?private_token=%s", remote.Path, remote.RepoName, pipeline.ID, token)
 		req, err := client.NewRequest("GET", path, nil)
