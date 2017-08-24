@@ -45,6 +45,7 @@ endif
 	$(DIFFER) $(MAKE) authors
 	$(BUMP_VERSION) minor main.go
 	git push origin --tags
+	git push github --tags
 	mkdir -p releases/$(version)
 	GOOS=linux GOARCH=amd64 go build -o releases/$(version)/gitlab-linux-amd64 .
 	GOOS=darwin GOARCH=amd64 go build -o releases/$(version)/gitlab-darwin-amd64 .
