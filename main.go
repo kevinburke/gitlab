@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/Shyp/go-git"
+	"github.com/kevinburke/bigtext"
 	types "github.com/kevinburke/go-types"
 	"github.com/kevinburke/rest"
 )
@@ -167,6 +168,12 @@ func wait(args []string) error {
 	}
 	cfg.ID = pipeline.ID
 	client := rest.NewClient("", "", "https://"+remote.Host+"/api/v4")
+	url := fmt.Sprintf("https://%s/%s/%s/pipelines/%d", cfg.Host, cfg.Org, cfg.RepoName, cfg.ID)
+	c := bigtext.Client{
+		Name:    fmt.Sprintf("%s (gitlab)", cfg.RepoName),
+		OpenURL: url,
+	}
+
 	for {
 		path := fmt.Sprintf("/projects/%s%%2F%s/pipelines/%d?private_token=%s", remote.Path, remote.RepoName, pipeline.ID, token)
 		req, err := client.NewRequest("GET", path, nil)
@@ -182,16 +189,19 @@ func wait(args []string) error {
 			for _, job := range jobs {
 				if job.Status == "failed" {
 					openJob(ctx, cfg, job)
+					c.Display(fmt.Sprintf("build %s failed", cfg.Branch))
 					fmt.Fprintf(os.Stderr, "https://%s/%s/%s/-/jobs/%d\n", cfg.Host, cfg.Org, cfg.RepoName, job.ID)
 					os.Exit(1)
 				}
 			}
 			openPipeline(ctx, cfg)
-			fmt.Fprintf(os.Stderr, "https://%s/%s/%s/pipelines/%d\n", cfg.Host, cfg.Org, cfg.RepoName, cfg.ID)
+			os.Stderr.WriteString(url + "\n")
+			c.Display(fmt.Sprintf("build %s failed", cfg.Branch))
 			os.Exit(1)
 		}
 		if pipeline.Status == "success" {
 			os.Stdout.WriteString("pipeline succeeded!\n")
+			c.Display(fmt.Sprintf("build %s passed", cfg.Branch))
 			os.Exit(0)
 		}
 		d := time.Since(pipeline.CreatedAt)

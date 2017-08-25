@@ -14,6 +14,12 @@
   version = "v2.11"
 
 [[projects]]
+  name = "github.com/kevinburke/bigtext"
+  packages = ["."]
+  revision = "fd72dcfb912b32532896bbc98413e5bd425eb315"
+  version = "0.2"
+
+[[projects]]
   name = "github.com/kevinburke/go-types"
   packages = ["."]
   revision = "4297d3d97383038ce276d912d16de3eadeb7b521"
@@ -62,6 +68,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "e5c5719af9bca1b9d867de75431bd04b012eeae666bf4ad9be01c0bfdcd29205"
+  inputs-digest = "23adef82f0f23c345ccf77348b48fcfd92bdeb003374acdbebfeff12455fac3c"
   solver-name = "gps-cdcl"
   solver-version = 1
