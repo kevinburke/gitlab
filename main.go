@@ -16,7 +16,7 @@ import (
 	"github.com/kevinburke/rest"
 )
 
-const Version = "0.7"
+const Version = "0.8"
 
 func checkError(err error, msg string) {
 	if err != nil {
