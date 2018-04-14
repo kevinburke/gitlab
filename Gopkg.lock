@@ -8,10 +8,16 @@
   version = "0.1"
 
 [[projects]]
+  name = "github.com/go-stack/stack"
+  packages = ["."]
+  revision = "259ab82a6cad3992b4e21ff5cac294ccb06474bc"
+  version = "v1.7.0"
+
+[[projects]]
   name = "github.com/inconshreveable/log15"
   packages = ["."]
-  revision = "b105bd37f74e5d9dc7b6ad7806715c7a2b83fd3f"
-  version = "v2.11"
+  revision = "0decfc6c20d9ca0ad143b0e89dcaa20f810b4fb3"
+  version = "v2.13"
 
 [[projects]]
   name = "github.com/kevinburke/bigtext"
@@ -27,8 +33,8 @@
 [[projects]]
   name = "github.com/kevinburke/rest"
   packages = ["."]
-  revision = "67ce29f826f2153dfdb5df53c0ff7f655efb36f0"
-  version = "1.0"
+  revision = "3d559d7967b033331191ee40bafc60bc8b14d545"
+  version = "2.0"
 
 [[projects]]
   name = "github.com/mattn/go-colorable"
@@ -39,8 +45,8 @@
 [[projects]]
   name = "github.com/mattn/go-isatty"
   packages = ["."]
-  revision = "fc9e8d8ef48496124e79ae0df75490096eccf6fe"
-  version = "v0.0.2"
+  revision = "0360b2af4f38e8d38c7fce2a9f4e702702d73a39"
+  version = "v0.0.3"
 
 [[projects]]
   name = "github.com/pelletier/go-toml"
@@ -50,24 +56,18 @@
 [[projects]]
   name = "github.com/satori/go.uuid"
   packages = ["."]
-  revision = "879c5887cd475cd7864858769793b2ceb0d44feb"
-  version = "v1.1.0"
+  revision = "f58768cc1a7a7e77a3bd49e98cdd21419399b6a3"
+  version = "v1.2.0"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix"]
-  revision = "07c182904dbd53199946ba614a412c61d3c548f5"
-
-[[projects]]
-  name = "gopkg.in/inconshreveable/log15.v2"
-  packages = ["stack","term"]
-  revision = "dc7890abeaadcb6a79a9a5ee30bc1897bbf97713"
-  version = "v2.10"
+  revision = "2281fa97ef7b0c26324634d5a22f04babdac8713"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "23adef82f0f23c345ccf77348b48fcfd92bdeb003374acdbebfeff12455fac3c"
+  inputs-digest = "8fdaf94fa861bdb2bccd061d88e142e2215d332d90d998d44b38a9339e90cb1b"
   solver-name = "gps-cdcl"
   solver-version = 1
